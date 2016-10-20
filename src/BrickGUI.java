@@ -19,7 +19,7 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
     boolean Left = false;
 
     int score = 0;
-    Graphics g;
+
 
     //ball x en y posities
     int ballX = 250;
