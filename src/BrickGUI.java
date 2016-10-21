@@ -296,7 +296,6 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
     }
 
     // /...Game Loop...................
-
     // /////////////////// When ball strikes borders......... it
 
     public void run() {
@@ -306,9 +305,9 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
 
         // ====================================================
         // == ball reverses when touches the brick=======
-//ballFallDown == false && bricksOver == false
+        //ballFallDown == false && bricksOver == false
         while (Running) {
-//   if(gameOver == true){return;}
+        //   if(gameOver == true){return;}
             for (int i = 0; i < Brick.length; i++) {
                 if (Brick[i] != null) {
                     if (Brick[i].intersects(Ball)) {
@@ -536,7 +535,6 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
 
     @Override
     public void mousePressed(MouseEvent e) {
-        ResumeGame();
         xpos = e.getX();
         ypos = e.getY();
         // Check if the mouse is in the rectangle
@@ -588,5 +586,4 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
     @Override
     public void mouseMoved(MouseEvent e) {
     }
-
 }
