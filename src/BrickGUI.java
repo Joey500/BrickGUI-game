@@ -2,79 +2,92 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.Random;
 
 
 public class BrickGUI extends JPanel implements KeyListener,ActionListener, MouseListener, MouseMotionListener,Runnable {
 
     //variablen
-    // Keys move
+    // Keys moves
     boolean Right = false;
     boolean Left = false;
-
-    int score = 0;
-
 
     //ball x en y posities
     int ballX = 250;
     int ballY = 218;
 
-    // variables declaration for ball.................................
-    // ===============================================================
-    // variables declaration for bat..................................
-    int batx = 370;
-    int baty = 340;
-    // variables declaration for bat..................................
-    // ===============================================================
-    // variables declaration for brick...............................
-    int brickx = 130;
-    int bricky = 40;
+   //paddle x en y positions
+    int padX = 370;
+    int padY = 340;
 
-    int brickBreadth = 70;
-    int brickHeight = 20;
+    // bricks formaten
+    int BrickX = 130;       int brickBreadth = 70;
+    int BrickY = 40;        int brickHeight = 20;
 
 
-
-    // variables declaration for brick...............................
-    // ===============================================================
-    // declaring ball, paddle,bricks
+    //Ball object
     Rectangle Ball = new Rectangle(ballX, ballY, 15, 15);
 
-    Rectangle Bat = new Rectangle(batx, baty, 60, 10);
+    // Bat object
+    Rectangle Bat = new Rectangle(padX, padY, 70, 10);
 
-    // Rectangle Brick;// = new Rectangle(brickx, bricky, 30, 10);
+    // bricks object
     Rectangle[] Brick = new Rectangle[22];
 
-    //reverses......==>
+    //reverse
     int movex = -1;
     int movey = -1;
 
+    //booleans
     boolean ballFallDown = false;
     boolean bricksOver = false;
 
-    int count = 0;
+    //levens
     int lives = 3;
 
+    int count = 0;
+
+    //score
+    int score = 0;
+
+    //tekst status
     String status;
 
     Timer timer;
     BufferedImage bufferedImage;
-    static int gameSpeed = 5;
+
+    //game snelheid
+    int gameSpeed = 5;
     Time time;
 
     boolean Running = true;
     boolean paused = false;
     private static Dimension dim;
-    Random random = new Random();
+
+    //tekst spelernaam
     String PlayerName;
 
-    int xpos;
-    int ypos;
-    boolean rect1Active,rect2Active;
-    int rect1xco, rect1yco, rect1width, rect1height;
-    int rect2xco, rect2yco, rect2width, rect2height;
-    BrickGUI(Container contentPane) {
+    //variabelen voor muis positie
+    int xPos;
+    int yPos;
 
+    //booleans
+    boolean rect1Active,rect2Active;
+
+    //variablen restart knop
+    int RestX = 620;        int RestWidth = 100;
+    int RestY = 450;        int RestHeight = 50;
+
+    //variabeln pauze knop
+    int PausX = 480;        int PausWidth = 100;
+    int PausY = 450;        int PausHeight = 50;
+
+
+    BrickGUI(Container contentPane) {
         timer = new Timer(gameSpeed, this);
         timer.start();
         time = new Time();
@@ -83,19 +96,11 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
             System.exit(0);
 
         }
-        rect1xco = 620;
-        rect1yco = 450;
-        rect1width = 100;
-        rect1height = 50;
 
-        rect2xco = 480;
-        rect2yco = 450;
-        rect2width = 100;
-        rect2height = 50;
-
-        // Add the MouseMotionListener to yourapplet
         addMouseMotionListener(this);
         addMouseListener(this);
+
+
     }
 
     public static void main(String[] args) {
@@ -163,7 +168,6 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
                 }
             }
         });
-
 
         game.addKeyListener(game);
         game.setFocusable(true);
@@ -238,12 +242,18 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
         }
         for (int i = 0; i < Brick.length; i++) {
             if (Brick[i] != null) {
-                if (i % 2 == 0) {
-                    g.setColor(new Color(0xFA0B0C));
-                } else {
-                    g.setColor(new Color(0xFF7F00));
+                if (i == 7){
+                    g.setColor(new Color(0x002FFA));
                 }
-
+                if (i == 13){
+                    g.setColor(new Color(0xFA472B));
+                }
+                if (i == 18) {
+                    g.setColor(new Color(0x3FFA39));
+                }
+                if (i == 21) {
+                    g.setColor(new Color(0x02A8FA));
+                }
 
                 g.fill3DRect(Brick[i].x, Brick[i].y, Brick[i].width,
                         Brick[i].height, true);
@@ -261,22 +271,27 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
         }
         if (rect1Active) {
             g.setColor(Color.red);
-            g.drawRect(rect1xco,rect1yco,rect1width,rect1height);
+            g.drawRect(RestX,RestY,RestWidth,RestHeight);
         }
         else {g.setColor(Color.red);
-            g.fillRect(rect1xco,rect1yco,rect1width,rect1height);
+            g.fillRect(RestX,RestY,RestWidth,RestHeight);
         }
 
-
+        Font Resume = new Font("Impact", Font.BOLD, 26);
+        g.setFont(Resume);
 
         if (rect2Active) {
-            g.setColor(Color.red);
-            g.drawRect(rect2xco,rect2yco,rect2width,rect2height);
-
+            g.setColor(Color.white);
+            g.drawRect(PausX,PausY,PausWidth,PausHeight);
+            g.drawString("Play", PausX / 2 + 255,PausY /2+260);
         }
         else {g.setColor(Color.red);
-            g.fillRect(rect2xco,rect2yco,rect2width,rect2height);
+            g.fillRect(PausX,PausY,PausWidth,PausHeight);
+            g.setColor(Color.white);
+            g.drawString("Pause", PausX / 2 + 255, PausY /2+260);
         }
+
+
 
         g.setColor(Color.white);
         Font Score = new Font("Impact", Font.BOLD, 34);
@@ -289,25 +304,24 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
 
         Font RestartText = new Font("Impact", Font.BOLD, 26);
         g.setFont(RestartText);
-        g.drawString("Restart ", rect1xco / 2 + 315, rect1yco /2+260);
-        g.drawString("Pause ", rect2xco / 2 + 255, rect2yco /2+260);
+        g.drawString("Restart ", RestX / 2 + 315, RestY /2+260);
+
         time.paint(g);
 
     }
+    Graphics g;
+    public void menu(){
+        g.fillRect(10,10,10,10);
 
-    // /...Game Loop...................
-    // /////////////////// When ball strikes borders......... it
-
+    }
+    //game loop
     public void run() {
-        // //////////// =====Creating bricks for the game===>.....
+        //methode bricks
         createBricks();
-        // ===========BRICKS created for the game new ready to use===
 
-        // ====================================================
-        // == ball reverses when touches the brick=======
-        //ballFallDown == false && bricksOver == false
+
         while (Running) {
-        //   if(gameOver == true){return;}
+
             for (int i = 0; i < Brick.length; i++) {
                 if (Brick[i] != null) {
                     if (Brick[i].intersects(Ball)) {
@@ -318,13 +332,13 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
                         score += 5;
 
 
-                    }// end of 2nd if..
-                }// end of 1st if..
-            }// end of for loop..
+                    }
+                }
+            }
 
-            // /////////// =================================
 
-            if (count == Brick.length) {// check if ball hits all bricks
+            // check if ball hits all bricks
+            if (count == Brick.length) {
                 bricksOver = true;
                 status = "You win the game!";
                 movex = 0;
@@ -333,13 +347,12 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
                 repaint();
 
             }
-            // /////////// =================================
+
             repaint();
             Ball.x += movex;
             Ball.y += movey;
 
             if (Left == true) {
-
                 Bat.x -= 3;
                 Right = false;
             }
@@ -361,15 +374,16 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
             // ....ball reverses when touches left and right boundary
             if (Ball.x <= 3 || Ball.x + Ball.height >= 790) {
                 movex = -movex;
-            }// if ends here
-            if (Ball.y <= 3) {// ////////////////|| bally + Ball.height >= 250
+            }
+
+            if (Ball.y <= 3) {
                 movey = -movey;
-            }// if ends here.....
-            //while (lives > 0) {
+            }
+
 
             if (Ball.y >= 340 && lives > 0) {
 
-                // when ball falls below bat game is over...
+                // Als de bal over de paddle valt, dan is game over.
                 ballFallDown = true;
                 // status = "You lost the game!";
 
@@ -379,25 +393,20 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
                 repaint();
 
             }
-            if(Ball.y <= 340 && lives ==0)
+
+            if(Ball.y <= 340 && lives == 0)
             {
                 bricksOver = true;
-
-                // when ball falls below bat game is over...
                 ballFallDown = true;
                 status = "You lost the game!";
-
                 PauseGame();
             }
             try {
                 Thread.sleep(10);
             } catch (Exception ex) {
 
-
             }
-
         }
-
     }
     //Key events
     @Override
@@ -408,18 +417,15 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
                 System.out.print("left");
                 break;
 
-
             case KeyEvent.VK_RIGHT:
                 Right = true;
                 System.out.print("right");
                 break;
 
-
             case KeyEvent.VK_ESCAPE:
                 restart();
                 System.out.print("Restart");
                 break;
-
         }
     }
 
@@ -454,25 +460,19 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
     }
 
     public void initializeVariables(){
-        // ..............
-        // variables declaration for ball.................................
         ballX = 350;
         ballY = 300;
-        // variables declaration for ball.................................
-        // ===============================================================
-        // variables declaration for bat..................................
-        batx = 370;
-        baty = 340;
-        // variables declaration for bat..................................
-        // ===============================================================
-        // variables declaration for brick...............................
-        brickx = 130;
-        bricky = 40;
-        // variables declaration for brick...............................
-        // ===============================================================
-        // declaring ball, paddle,bricks
+
+        padX = 370;
+        padY = 340;
+
+        BrickX = 130;
+        BrickY = 40;
+
         Ball = new Rectangle(ballX, ballY, 15, 15);
-        Bat = new Rectangle(batx, baty, 60, 10);
+        Bat = new Rectangle(padX, padY, 70, 10);
+
+
         // Rectangle Brick;// = new Rectangle(brickx, bricky, 30, 10);
         Brick = new Rectangle[22];
 
@@ -483,50 +483,50 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
         count = 0;
         status = "";
         score = 0;
-
-    }
-    public void score(){
-        lives = 3;
     }
 
     public void createBricks(){
         ///create Bricks
         for (int i = 0; i < Brick.length; i++) {
-            Brick[i] = new Rectangle(brickx, bricky, brickBreadth, brickHeight);
+            Brick[i] = new Rectangle(BrickX, BrickY, brickBreadth, brickHeight);
 
             if (i == 6) {
-                brickx = 90;
-                bricky = (bricky + brickHeight + 7);
+                BrickX = 90;
+                BrickY = (BrickY + brickHeight + 7);
 
             }
             if (i == 12) {
-                brickx = 130;
-                bricky = (bricky + brickHeight + 7);
+                BrickX = 130;
+                BrickY = (BrickY + brickHeight + 7);
 
             }
             if (i == 17) {
 
-                brickx = 200;
+                BrickX = 200;
 
-                bricky = (bricky + brickHeight + 7);
+                BrickY = (BrickY + brickHeight + 7);
 
             }
 
             if (i == 20) {
-                brickx = 280;
-                bricky = (bricky + brickHeight + 7);
+                BrickX = 280;
+                BrickY = (BrickY + brickHeight + 7);
             }
 
-            brickx += (brickBreadth + 5);
+            BrickX += (brickBreadth + 5);
         }
 
         repaint();
     }
 
+
+
     @Override
     public void actionPerformed(ActionEvent e) {
 
     }
+
+
 
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -535,11 +535,13 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
 
     @Override
     public void mousePressed(MouseEvent e) {
-        xpos = e.getX();
-        ypos = e.getY();
-        // Check if the mouse is in the rectangle
-        if (xpos > rect1xco&& xpos < rect1xco+rect1width && ypos > rect1yco
-                && ypos < rect1yco+rect1height) {
+
+        xPos = e.getX();
+        yPos = e.getY();
+
+        // Check als binnen de vierkant valt
+        if (xPos > RestX && xPos < RestX + RestWidth && yPos > RestY
+                && yPos < RestY + RestHeight) {
 
             rect1Active = true;
             lives = 3;
@@ -550,16 +552,20 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
             //show the results of the motion
             repaint();
         }
+
         int x = e.getX();
         int y = e.getY();
-        if (x > rect2xco&& x < rect2xco+rect2width && y > rect2yco
-                && y < rect1yco+rect1height) {
+        if (x > PausX && x < PausX + PausWidth && y > PausY
+                && y < PausY + PausHeight) {
             rect2Active = true;
             PauseGame();
         }
+
         else {
             rect2Active = false;
             repaint();
+            ResumeGame();
+
         }
     }
 
@@ -584,6 +590,9 @@ public class BrickGUI extends JPanel implements KeyListener,ActionListener, Mous
     }
 
     @Override
+
     public void mouseMoved(MouseEvent e) {
+
     }
+
 }
